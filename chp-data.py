@@ -61,6 +61,11 @@ doseDataFrame = pd.DataFrame([[u'未接種第1針', u'未接種第2針', u'未�
 #print(doseDataFrame)
 doseDataFrame.columns = ['ifDose1', 'ifDose2', 'ifDose3', 'number']
 
+# 各具体数据
+#print("\nThe first dose\nReceived Dose1: ", rDoseDict['firstDoseTotal'], " undoseNum: ", undoseNum, " sum(Total): ", rDoseDict['firstDoseTotal'] + undoseNum)
+#print("\nThe secode dose\nReceived Dose2: ", rDoseDict['secondDoseTotal'], "Only received 1 dose: ", dose1Num, "sum(firstDoseTotal): ", rDoseDict['secondDoseTotal'] + dose1Num)
+#print('totalNum: ', totalNum)
+
 # nested pie chart
 outer = doseDataFrame.groupby(['ifDose1']).sum()
 middle = doseDataFrame.groupby(['ifDose1', 'ifDose2']).sum()
@@ -69,21 +74,36 @@ outerLabels = outer.index.get_level_values(0)
 middleLabels = middle.index.get_level_values(1)
 innerLabels = inner.index.get_level_values(2) # 3 levels
 fig, ax = plt.subplots(figsize=(24,12))
-size = 0.3
+size = 0.1
 sizeInner = 0.3
 sizeMiddle = 0.6
+colorOuter = ['#3F7C85', '#FF5F5D']
+colorMiddle = ['#72F2EB', '#00CCBF', '#FF5F5D']
+colorInner = ['#A1C7E0', '#0099DD', '#00CCBF', '#FF5F5D']
 
 ax.pie(outer.values.flatten(), radius=1,
-       labels=outerLabels,
-       wedgeprops=dict(width=size, edgecolor='w'))
+       labels = outerLabels,
+       labeldistance = 1.2,
+       colors = colorOuter,
+       autopct = '%1.1f%%',
+       pctdistance = 1.1,
+       wedgeprops = dict(width = size, edgecolor = 'w'))
 
 ax.pie(middle.values.flatten(), radius=sizeMiddle,
        labels = middleLabels,
-       wedgeprops=dict(width=size, edgecolor='w'))
+       labeldistance = 1.1,
+       colors = colorMiddle,
+       autopct = '%1.1f%%',
+       pctdistance = 0.93,
+       wedgeprops = dict(width = size, edgecolor = 'w'))
 
 ax.pie(inner.values.flatten(), radius=sizeInner,
        labels = innerLabels,
-       wedgeprops=dict(width=size, edgecolor='w'))
+       labeldistance = 0.95,
+       colors = colorInner,
+       autopct = '%1.1f%%',
+       pctdistance = 0.4,
+       wedgeprops = dict(width = size, edgecolor = 'w'))
 
 ax.set(aspect="equal", title=u'疫苗接種比例圖')
 plt.savefig('./res/dose-pie-chart' + str(int(timeStamp)) + '.jpg')
